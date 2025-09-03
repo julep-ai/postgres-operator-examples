@@ -5,27 +5,38 @@ metadata:
   annotations:
     postgres-operator.crunchydata.com/autoCreateUserSchema: "true"
 spec:
+  image: julepai/crunchy-pg-custom
   postgresVersion: 17
+
+  config:
+    parameters:
+      shared_preload_libraries: "timescaledb"
+
   users:
     - name: hippo
       databases:
         - zoo
+    - name: postgres
+      databases:
+        - postgres
   instances:
     - name: instance1
       dataVolumeClaimSpec:
+        storageClassName: auto-ebs-sc
         accessModes:
         - "ReadWriteOnce"
         resources:
           requests:
-            storage: 1Gi
+            storage: 20Gi
   backups:
     pgbackrest:
       repos:
       - name: repo1
         volume:
           volumeClaimSpec:
+            storageClassName: auto-ebs-sc
             accessModes:
             - "ReadWriteOnce"
             resources:
               requests:
-                storage: 1Gi
+                storage: 20Gi
